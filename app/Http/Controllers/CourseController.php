@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -30,6 +29,12 @@ class CourseController extends Controller
         ]);
 
         return redirect()->route('courses.index')->with('success', 'Khóa học đã được thêm!');
+    }
+
+    // Thêm khóa học mới (hiển thị form tạo khóa học)
+    public function create()
+    {
+        return view('courses.create'); // Đảm bảo bạn có view 'courses.create'
     }
 
     // Trả về dữ liệu khóa học khi chỉnh sửa

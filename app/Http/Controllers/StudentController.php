@@ -6,44 +6,58 @@ use App\Models\Student;
 
 class StudentController extends Controller
 {
+    // Hiển thị danh sách học viên
     public function index()
     {
         $students = Student::all();
-        return view('students', compact('students'));
+        return view('students.index', compact('students'));
     }
 
+    // Hiển thị form thêm học viên mới
     public function create()
     {
-        return view('students_create');
+        return view('students.create');
     }
 
+    // Lưu học viên mới vào database
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:students,email',
+            'email' => 'required|email|unique:students',
+            'phone' => 'nullable|string|max:20',
         ]);
 
         Student::create($request->all());
-        return redirect()->route('students.index')->with('success', 'Học viên được thêm thành công');
+
+        return redirect()->route('students.index')->with('success', 'Học viên đã được thêm thành công!');
     }
 
-    public function edit($id)
+    // Hiển thị form chỉnh sửa học viên
+    public function edit(Student $student)
     {
-        $student = Student::findOrFail($id);
-        return view('students_edit', compact('student'));
+        return view('students.edit', compact('student'));
     }
 
-    public function update(Request $request, $id)
+    // Cập nhật thông tin học viên
+    public function update(Request $request, Student $student)
     {
-        $student = Student::findOrFail($id);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:students,email,' . $student->id,
+            'phone' => 'nullable|string|max:20',
+        ]);
+
         $student->update($request->all());
-        return redirect()->route('students.index')->with('success', 'Thông tin học viên được cập nhật');
+
+        return redirect()->route('students.index')->with('success', 'Thông tin học viên đã được cập nhật!');
     }
 
-    public function destroy($id)
+    // Xóa học viên
+    public function destroy(Student $student)
     {
-        Student::destroy($id);
-        return redirect()->route('students.index')->with('success', 'Học viên đã bị xóa');
+        $student->delete();
+        return redirect()->route('students.index')->with('success', 'Học viên đã bị xóa!');
     }
 }
+
