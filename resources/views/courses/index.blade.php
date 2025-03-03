@@ -16,40 +16,38 @@
 
     <div class="card shadow-lg">
         <div class="card-body">
-            <table id="coursesTable" class="table table-hover table-bordered align-middle">
-                <thead class="table-dark text-center">
+            <table id="coursesTable" class="table table-striped table-hover table-bordered align-middle text-center">
+                <thead class="table-dark">
                     <tr>
                         <th>ID</th>
-                        <th>📖 Tiêu đề</th>
-                        <th>📝 Mô tả</th>
-                        <th>👨‍🏫 Giảng viên</th>
-                        <th>⚙️ Hành động</th>
+                        <th><i class="fas fa-book"></i> Tiêu đề</th>
+                        <th><i class="fas fa-pencil-alt"></i> Mô tả</th>
+                        <th><i class="fas fa-chalkboard-teacher"></i> Giảng viên</th>
+                        <th><i class="fas fa-cogs"></i> Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($courses as $course)
-                        <tr class="text-center">
+                        <tr>
                             <td><strong>{{ $course->id }}</strong></td>
                             <td>{{ $course->title }}</td>
                             <td>{{ $course->description }}</td>
-                            <td>{{ $course->instructor_name ? $course->instructor_name : 'Không có giảng viên' }}</td>
+                            <td>{{ $course->instructor_name ?? 'Không có giảng viên' }}</td>
                             <td>
                                 <!-- Nút Sửa -->
                                 <button type="button" class="btn btn-warning btn-sm edit-button" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#editCourseModal"
                                     data-id="{{ $course->id }}"
                                     data-title="{{ $course->title }}"
                                     data-description="{{ $course->description }}"
                                     data-instructor="{{ $course->instructor_name }}">
-                                    ✏️ Sửa
+                                    <i class="fas fa-edit"></i> Sửa
                                 </button>
 
                                 <!-- Nút Xóa -->
-                                <form action="{{ route('courses.destroy', $course->id) }}" method="POST" class="d-inline delete-form" data-name="{{ $course->title }}">
+                                <form action="{{ route('courses.destroy', $course->id) }}" method="POST" class="d-inline delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" class="btn btn-danger btn-sm delete-button">
+                                    <button type="button" class="btn btn-danger btn-sm delete-button" data-name="{{ $course->title }}">
                                         <i class="fas fa-trash-alt"></i> Xóa
                                     </button>
                                 </form>
@@ -62,63 +60,146 @@
     </div>
 </div>
 
+<!-- Modal Thêm Khóa Học -->
+<div class="modal fade" id="addCourseModal" tabindex="-1" aria-labelledby="addCourseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCourseModalLabel">Thêm Khóa Học</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addForm" action="{{ route('courses.store') }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label">📖 Tiêu đề</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">📝 Mô tả</label>
+                        <textarea name="description" class="form-control"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">👨‍🏫 Giảng viên</label>
+                        <input type="text" name="instructor_name" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Lưu</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Sửa Khóa Học -->
+<div class="modal fade" id="editCourseModal" tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCourseModalLabel">Sửa Khóa Học</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editCourseForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="mb-3">
+                        <label class="form-label">📖 Tiêu đề</label>
+                        <input type="text" id="edit-title" name="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">📝 Mô tả</label>
+                        <textarea id="edit-description" name="description" class="form-control"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">👨‍🏫 Giảng viên</label>
+                        <input type="text" id="edit-instructor" name="instructor_name" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Cập nhật</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- JavaScript -->
+<!-- Import SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-$(document).ready(function () {
-    $('#coursesTable').DataTable();
-
-    // Xác nhận xóa với SweetAlert2
-    $(document).on("click", ".delete-button", function () {
-        let form = $(this).closest("form");
-        let itemName = form.data("name");
-
-        Swal.fire({
-            title: "Bạn có chắc muốn xóa?",
-            text: "Bạn sắp xóa: " + itemName,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Xóa",
-            cancelButtonText: "Hủy"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
+    document.addEventListener("DOMContentLoaded", function () {
+        // Xử lý mở modal sửa
+        document.querySelectorAll(".edit-button").forEach(button => {
+            button.addEventListener("click", function () {
+                let id = this.dataset.id;
+                let title = this.dataset.title;
+                let description = this.dataset.description;
+                let instructor = this.dataset.instructor;
+    
+                // Kiểm tra nếu phần tử tồn tại trước khi thay đổi giá trị
+                let editTitle = document.getElementById("edit-title");
+                if (editTitle) {
+                    editTitle.value = title;
+                }
+    
+                let editDescription = document.getElementById("edit-description");
+                if (editDescription) {
+                    editDescription.value = description;
+                }
+    
+                let editInstructor = document.getElementById("edit-instructor");
+                if (editInstructor) {
+                    editInstructor.value = instructor;
+                }
+    
+                // Kiểm tra và cập nhật lại action của form
+                let editCourseForm = document.getElementById("editCourseForm");
+                if (editCourseForm) {
+                    editCourseForm.setAttribute("action", "/courses/" + id);
+                } else {
+                    console.error("Không tìm thấy form 'editCourseForm'");
+                }
+    
+                // Mở modal
+                let modal = new bootstrap.Modal(document.getElementById("editCourseModal"));
+                modal.show();
+            });
+        });
+    
+        // Xử lý Xóa với SweetAlert2
+        document.querySelectorAll(".delete-button").forEach(button => {
+            button.addEventListener("click", function () {
+                let form = this.closest("form");
+                let itemName = this.dataset.name;
+    
+                Swal.fire({
+                    title: "Bạn có chắc muốn xóa?",
+                    text: "Bạn sắp xóa: " + itemName,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Xóa",
+                    cancelButtonText: "Hủy"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // Gửi form để xóa
+                    }
+                });
+            });
+        });
+    
+        // Reset form khi mở modal thêm
+        document.getElementById("addCourseModal").addEventListener("show.bs.modal", function () {
+            let addForm = document.getElementById("addForm");
+            if (addForm) {
+                addForm.reset();
             }
         });
     });
+    </script>
+    
+    
 
-    // Xử lý mở modal sửa
-    $(document).on("click", ".edit-button", function () {
-        let id = $(this).data("id");
-        let title = $(this).data("title");
-        let description = $(this).data("description");
-        let instructor = $(this).data("instructor");
-
-        $("#edit-title").val(title);
-        $("#edit-description").val(description);
-        $("#edit-instructor").val(instructor);
-        $("#editCourseForm").attr("action", "/courses/" + id);
-
-        $("#editCourseModal").modal("show");
-    });
-
-    // Reset form khi mở modal thêm
-    $('#addCourseModal').on('show.bs.modal', function () {
-        $("#addForm").trigger("reset");
-    });
-
-    // Đảm bảo menu hoạt động sau khi đóng modal
-    $('.modal').on('hidden.bs.modal', function () {
-        $('.navbar-collapse').removeClass('show');
-    });
-
-    // Sửa lỗi menu không mở được sau khi modal đóng
-    $('.navbar-toggler').click(function () {
-        setTimeout(function () {
-            $('.navbar-collapse').addClass('show');
-        }, 300);
-    });
-});
-</script>
 @endsection

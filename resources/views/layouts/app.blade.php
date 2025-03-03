@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name', 'Course Management') }}</title>
-    <!-- Bootstrap CSS -->
+    
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
@@ -35,7 +36,7 @@
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             @if(Route::has('dashboard'))
-                                <a class="nav-link" href="{{ route('dashboard') }}">📊 Dashboard</a>
+                                <a class="nav-link" href="{{ route('dashboard') }}">📊 Đăng Kí Khóa Học</a>
                             @endif
                         </li>
                         <li class="nav-item dropdown">
@@ -103,71 +104,67 @@
         @yield('content')
     </div>
 
-    <!-- jQuery & Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap 5 Bundle (JS + Popper.js) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        
-        $(document).ready(function () {
-            // Xác nhận xóa với SweetAlert2
-            $(document).on("click", ".delete-button", function () {
-                let form = $(this).closest("form");
-                let itemName = form.data("name");
 
-                Swal.fire({
-                    title: "Bạn có chắc muốn xóa?",
-                    text: "Bạn sắp xóa: " + itemName,
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#d33",
-                    cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Xóa",
-                    cancelButtonText: "Hủy"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Xác nhận xóa với SweetAlert2
+            document.querySelectorAll(".delete-button").forEach(button => {
+                button.addEventListener("click", function () {
+                    let form = this.closest("form");
+                    let itemName = form.dataset.name;
+
+                    Swal.fire({
+                        title: "Bạn có chắc muốn xóa?",
+                        text: "Bạn sắp xóa: " + itemName,
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Xóa",
+                        cancelButtonText: "Hủy"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
                 });
             });
 
             // Xử lý mở modal sửa
-            $(document).on("click", ".edit-button", function () {
-                let id = $(this).data("id");
-                let name = $(this).data("name") || "";
-                let email = $(this).data("email") || "";
-                let phone = $(this).data("phone") || "";
-                let title = $(this).data("title") || "";
-                let description = $(this).data("description") || "";
-                let instructor = $(this).data("instructor") || "";
+            document.querySelectorAll(".edit-button").forEach(button => {
+                button.addEventListener("click", function () {
+                    let id = this.dataset.id;
+                    document.getElementById("editForm").setAttribute("action", "/students/" + id);
+                    document.getElementById("editCourseForm").setAttribute("action", "/courses/" + id);
 
-                $("#edit-name").val(name);
-                $("#edit-email").val(email);
-                $("#edit-phone").val(phone);
-                $("#edit-title").val(title);
-                $("#edit-description").val(description);
-                $("#edit-instructor").val(instructor);
-
-                $("#editForm").attr("action", "/students/" + id);
-                $("#editCourseForm").attr("action", "/courses/" + id);
-
-                $("#editModal").modal("show");
+                    let modal = new bootstrap.Modal(document.getElementById("editModal"));
+                    modal.show();
+                });
             });
 
             // Reset form khi mở modal thêm
-            $('#addModal').on('show.bs.modal', function () {
-                $("#addForm").trigger("reset");
-            });
+            let addModal = document.getElementById('addModal');
+            if (addModal) {
+                addModal.addEventListener('show.bs.modal', function () {
+                    document.getElementById("addForm").reset();
+                });
+            }
 
             // Đảm bảo menu hoạt động sau khi đóng modal
-            $('.modal').on('hidden.bs.modal', function () {
-                $('.navbar-collapse').removeClass('show');
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('hidden.bs.modal', function () {
+                    document.querySelector('.navbar-collapse').classList.remove('show');
+                });
             });
 
             // Đóng dropdown khi click ra ngoài
-            $(document).click(function (event) {
-                if (!$(event.target).closest('.dropdown-toggle, .dropdown-menu').length) {
-                    $('.dropdown-menu').removeClass('show');
+            document.addEventListener("click", function (event) {
+                if (!event.target.closest('.dropdown-toggle, .dropdown-menu')) {
+                    document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                        menu.classList.remove('show');
+                    });
                 }
             });
         });

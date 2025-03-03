@@ -22,8 +22,8 @@
                 <input type="text" name="phone" class="form-control">
             </div>
             <button type="submit" class="btn btn-primary w-100">Lưu</button>
-            <a href="{{ route('students.index') }}" class="btn btn-secondary w-100 mt-2">Hủy</a>
         </form>
     </div>
 </div>
 @endsection
+

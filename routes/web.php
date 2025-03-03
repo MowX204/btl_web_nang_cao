@@ -10,8 +10,6 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Password;
 
-
-
 // 🚀 Chuyển hướng trang chủ đến trang login nếu chưa đăng nhập, nếu đã đăng nhập thì vào dashboard
 Route::get('/', function () {
     return Auth::check() ? redirect()->route('dashboard') : redirect()->route('login');
@@ -45,9 +43,6 @@ Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'ind
 // ✅ Đăng xuất
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
-
-
 // ✅ Đăng nhập & Đăng ký
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
@@ -56,19 +51,21 @@ Route::post('register', [AuthController::class, 'register']);
 
 // Thêm route cho yêu cầu mật khẩu
 Route::get('password/request', [AuthController::class, 'showPasswordRequestForm'])->name('password.request');
-
-// Route để gửi email reset mật khẩu
 Route::post('password/email', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
 
-
-Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
-Route::get('password/reset', [AuthController::class, 'showLinkRequestForm'])->name('password.request');
-Route::post('password/email', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
+// Route để reset mật khẩu
 Route::get('password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
 Route::post('password/reset', [AuthController::class, 'reset'])->name('password.update');
-Route::get('/password/reset', [AuthController::class, 'showLinkRequestForm'])->name('password.request');
 
-Route::resource('students', StudentController::class);
 
+Route::post('/students/assign-course', [StudentController::class, 'assignCourse'])->name('students.assignCourse');
+
+
+// Xóa khóa học của học viên
+Route::delete('/students/{student}/courses/{course}', [StudentController::class, 'removeCourse'])
+->name('students.removeCourse');
+
+Route::post('/students/assign-course', [StudentController::class, 'assignCourse'])->name('students.assignCourse');
+Route::delete('/students/{student}/courses/{course}', [StudentController::class, 'removeCourse'])->name('students.removeCourse');
 
 
