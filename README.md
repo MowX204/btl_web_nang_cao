@@ -53,9 +53,9 @@
 - **Cơ sở dữ liệu:** SQLite (hoặc MySQL)
 
 ---
-
+```
 ## 🚀 **Hướng Dẫn Cài Đặt**
-
+```
 ### 🔹 **1. Clone repository**
 ```sh
 git clone https://github.com/MowX204/btl_web_nang_cao.git
