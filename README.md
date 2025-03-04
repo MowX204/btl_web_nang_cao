@@ -1,4 +1,4 @@
-## 🎓 **Quản Lý Khóa Học**
+![so_do_chuc_nang](https://github.com/user-attachments/assets/3d322e75-523d-410b-a0c5-aefe888a5d6a)## 🎓 **Quản Lý Khóa Học**
 
 > Dự án **Quản Lý Khóa Học** được xây dựng bằng Laravel, giúp quản lý các khóa học với các chức năng thêm, sửa, xóa và tìm kiếm.
 
@@ -6,6 +6,7 @@
 
 ## 📌 **Sơ Đồ Chức Năng**
 
+![image](https://github.com/user-attachments/assets/0a3b71c1-a60d-433d-a964-c92f7613cb5c)
 
 
 ---
