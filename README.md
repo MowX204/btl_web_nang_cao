@@ -1,6 +1,27 @@
 ## 🎓 **Quản Lý Khóa Học**
 
 > Dự án **Quản Lý Khóa Học** được xây dựng bằng Laravel, giúp quản lý các khóa học với các chức năng thêm, sửa, xóa và tìm kiếm.
+>
+> flowchart TD
+    A[Quản lý Khóa Học] --> B[Thêm Khóa Học]
+    A --> C[Sửa Khóa Học]
+    A --> D[Xóa Khóa Học]
+    A --> E[Quản lý Học Viên]
+    E --> F[Thêm Học Viên]
+    E --> G[Sửa Học Viên]
+    E --> H[Xóa Học Viên]
+    A --> I[Quản lý Giao Dịch]
+    I --> J[Thêm Giao Dịch]
+    I --> K[Hoàn Thành Giao Dịch]
+
+    classDef default fill:#f9f,stroke:#333,stroke-width:2px;
+    class A fill:#bbf;
+    class B,C,D fill:#cfc;
+    class E fill:#ffcc00;
+    class F,G,H fill:#99ff99;
+    class I fill:#ffcc99;
+    class J,K fill:#ffcc33;
+
 
 ## 📌 **Sơ Đồ Chức Năng**
 
